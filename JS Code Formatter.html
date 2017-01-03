@@ -39,9 +39,14 @@
 
 <body onload="prettyPrint()">
 
+<a href="http://codebeautify.org/javascript-tools" target="_blank" title="(Will be open in new window.)">JavaScript Tools</a>
+on <a href="http://codebeautify.org">http://codebeautify.org</a>
+<br>
+
 <textarea id="raw" style="width: 75%; height: 200px"></textarea>
 <br>
 <!-- Does not work. -->
+<button onclick="oneSpaceToFour()" title="Replace one space to four at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
 <button onclick="process()" disabled title="Not implemented.">Process</button>
 
 
@@ -74,6 +79,13 @@ baz(); // <-- call-site for `baz`
         function process() {
             document.getElementById('result').innerText = document.getElementById('raw').value;
             prettyPrint();
+        }
+        
+        function oneSpaceToFour() {
+            var re = /(\n|\r\n)( +)/gm;
+            var origin = document.getElementById('raw').value;
+            origin = origin.replace(re, '$1$2$2$2$2');
+            document.getElementById('raw').value = origin;
         }
     </script>
 </body>
