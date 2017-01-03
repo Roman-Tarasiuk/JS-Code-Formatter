@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- https://github.com/google/code-prettify -->
+    <meta charset="UTF-8">
+    <title>JS Code Formatter</title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+
+    <link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
+    <script src="google-code-prettify/run_prettify.js"></script>
+    
+    <style>
+        pre {
+            font-family: 'Ubuntu Mono', monospace;
+        }
+        
+        .kwd {
+            color: #069;
+            font-weight: bold;
+        }
+        
+        .pln {
+            color: #008;
+        }
+        
+        .pun {
+            color: #000;
+        }
+        
+        .com {
+            color: #35586c;
+        }
+        
+        .str {
+            color: #c30;
+        }
+    </style>
+</head>
+
+<body onload="prettyPrint()">
+
+<textarea id="raw" style="width: 75%; height: 200px"></textarea>
+<br>
+<!-- Does not work. -->
+<button onclick="process()" disabled title="Not implemented.">Process</button>
+
+
+<!-- Put JS code here. -->
+<pre class="prettyprint" id="result">
+function baz() {
+    // call-stack is: `baz`
+    // so, our call-site is in the global scope
+    console.log("baz");
+    bar(); // <-- call-site for `bar`
+}
+
+function bar() {
+    // call-stack is: `baz` -> `bar`
+    // so, our call-site is in `baz`
+    console.log("bar");
+    foo(); // <-- call-site for `foo`
+}
+
+function foo() {
+    // call-stack is: `baz` -> `bar` -> `foo`
+    // so, our call-site is in `bar`
+    console.log("foo");
+}
+
+baz(); // <-- call-site for `baz`
+</pre>
+
+    <script>
+        function process() {
+            document.getElementById('result').innerText = document.getElementById('raw').value;
+            prettyPrint();
+        }
+    </script>
+</body>
+</html>
