@@ -8,47 +8,46 @@
 
     <link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
     <script src="google-code-prettify/run_prettify.js"></script>
-    
+    <script src="google-code-prettify/prettify.js"></script>
+
     <style>
         pre {
             font-family: 'Ubuntu Mono', monospace;
         }
-        
+
         .kwd {
             color: #069;
             font-weight: bold;
         }
-        
+
         .pln {
             color: #008;
         }
-        
+
         .pun {
             color: #000;
         }
-        
+
         .com {
             color: #35586c;
         }
-        
+
         .str {
             color: #c30;
         }
     </style>
 </head>
 
-<body onload="prettyPrint()">
+<body>
+    <a href="http://codebeautify.org/javascript-tools" target="_blank" title="(Will be open in new window.)">JavaScript Tools</a>
+    on <a href="http://codebeautify.org">http://codebeautify.org</a>
+    <br>
 
-<a href="http://codebeautify.org/javascript-tools" target="_blank" title="(Will be open in new window.)">JavaScript Tools</a>
-on <a href="http://codebeautify.org">http://codebeautify.org</a>
-<br>
+    <textarea id="raw" style="width: 75%; height: 200px"></textarea>
+    <br>
 
-<textarea id="raw" style="width: 75%; height: 200px"></textarea>
-<br>
-<!-- Does not work. -->
-<button onclick="oneSpaceToFour()" title="Replace one space to four at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
-<button onclick="process()" disabled title="Not implemented.">Process</button>
-
+    <button onclick="oneSpaceToFour()" title="Replace one space to four at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
+    <button onclick="process()">Process</button>
 
 <!-- Put JS code here. -->
 <pre class="prettyprint" id="result">
@@ -77,10 +76,14 @@ baz(); // <-- call-site for `baz`
 
     <script>
         function process() {
+            // http://stackoverflow.com/questions/15983894/dynamic-google-code-prettify-doesnt-work
+            document.getElementById('result').className = 'prettyprint';
+
             document.getElementById('result').innerText = document.getElementById('raw').value;
+
             prettyPrint();
         }
-        
+
         function oneSpaceToFour() {
             var re = /(\n|\r\n)( +)/gm;
             var origin = document.getElementById('raw').value;
