@@ -21,7 +21,10 @@
     <textarea id="raw" style="width: 75%; height: 200px"></textarea>
     <br>
 
-    <button onclick="oneSpaceToFour()" title="Replace one space to four at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
+    <label for="">Indent (spaces):</label>
+    <input type="number" id="indent" name="tabs" value="2" min="2" style="width: 40px;"></input>
+
+    <button onclick="oneSpaceToFour()" title="Replace one space to several at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
     <button onclick="process()">Process</button>
 
     <pre class="prettyprint" id="result"></pre>
@@ -39,7 +42,15 @@
         function oneSpaceToFour() {
             var re = /(\n|\r\n)( +)/gm;
             var origin = document.getElementById('raw').value;
-            origin = origin.replace(re, '$1$2$2$2$2');
+
+            var replaceTo = '$1$2';
+            var replaceCount = parseInt(document.getElementById('indent').value);
+            for (var i = 1; i < replaceCount; i++) {
+                replaceTo += '$2';
+            }
+
+            origin = origin.replace(re, replaceTo);
+
             document.getElementById('raw').value = origin;
         }
     </script>
