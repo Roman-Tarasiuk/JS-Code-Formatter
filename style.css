@@ -1,0 +1,30 @@
+pre {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 18pt;
+}
+
+.kwd {
+    color: #069;
+    font-weight: bold;
+}
+
+.pln {
+    color: #008;
+}
+
+.pun {
+    color: #000;
+}
+
+.com {
+    color: #35586c;
+    font-style: italic;
+}
+
+.str {
+    color: #c30;
+}
+
+.typ {
+    color: #366;
+}
