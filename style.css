@@ -30,6 +30,10 @@ pre {
     color: #366;
 }
 
+.lit {
+    color: #f60;
+}
+
 
 a, a:active, a:visited {
     color: #888;
