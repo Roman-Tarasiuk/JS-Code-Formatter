@@ -29,3 +29,24 @@ pre {
 .typ {
     color: #366;
 }
+
+
+a, a:active, a:visited {
+    color: #888;
+}
+
+a.lnk {
+    text-decoration: none;
+    font-size: smaller;
+}
+
+a.lnk:hover {
+    text-decoration: underline;
+    font-size: smaller;
+}
+
+
+#raw {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
