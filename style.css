@@ -37,14 +37,16 @@ a, a:active, a:visited {
 
 a.lnk {
     text-decoration: none;
-    font-size: smaller;
 }
 
 a.lnk:hover {
     text-decoration: underline;
-    font-size: smaller;
 }
 
+
+.on {
+    font-size: smaller;
+}
 
 #raw {
     margin-top: 5px;
