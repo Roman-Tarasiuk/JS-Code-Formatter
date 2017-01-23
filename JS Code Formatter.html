@@ -34,15 +34,18 @@
             // http://stackoverflow.com/questions/15983894/dynamic-google-code-prettify-doesnt-work
             document.getElementById('result').className = 'prettyprint';
 
-            document.getElementById('result').innerText = document.getElementById('raw').value;
+            var raw = document.getElementById('raw');
 
+            document.getElementById('result').innerText = raw.value;
             prettyPrint();
+
+            raw.select();
         }
 
         function oneSpaceToFour() {
             var re = /(\n|\r\n)( +)/gm;
-            
-            var raw = document.getElementById('raw')
+
+            var raw = document.getElementById('raw');
             var origin = raw.value;
 
             var replaceTo = '$1$2';
