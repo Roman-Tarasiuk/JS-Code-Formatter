@@ -21,20 +21,24 @@
     <textarea id="input" style="width: 75%; height: 200px"></textarea>
     <br>
 
-    <label for="">Indent (spaces):</label>
-    <input type="number" id="indent" name="tabs" value="2" min="2" style="width: 40px;"></input>
+    <div class="btn-group">
+        <label for="">Indent (spaces):</label>
+        <input type="number" id="indent" name="tabs" value="2" min="2" style="width: 40px;"></input>
 
-    <button onclick="oneSpaceToSeveral()" title="Replace one space to several at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
-    <button onclick=addIndent()>&gt; indent</button>
-    <button onclick=removeIndent()>&lt; indent</button>
+        <button onclick="oneSpaceToSeveral()" title="Replace one space to several at the line begin.">'&nbsp;' &rarr; '&nbsp;&nbsp;&nbsp;&nbsp;'</button></button>
+        <button onclick=addIndent()>&gt; indent</button>
+        <button onclick=removeIndent()>&lt; indent</button>
+        <button onclick=trimTrailing()>Trim trailing</button>
+    </div>
 
-    <br>
-    <button onclick=selectAll()>Select all</button>
-    <button onclick=comment()>Comment</button>
-    <button onclick=uncomment()>Uncomment</button>
-    <button onclick=beautify()>Beautify</button>
-    <button onclick="processPrettyPrint()">Pretty print</button>
-    <button onclick="clearPrettyPrint()">Clear pp</button>
+    <div class="btn-group">
+        <button onclick=selectAll()>Select all</button>
+        <button onclick=comment()>Comment</button>
+        <button onclick=uncomment()>Uncomment</button>
+        <button onclick=beautify()>Beautify</button>
+        <button onclick="processPrettyPrint()">Pretty print</button>
+        <button onclick="clearPrettyPrint()">Clear pp</button>
+    </div>
 
     <pre class="prettyprint" id="result"></pre>
 
@@ -68,6 +72,25 @@
         
         function clearPrettyPrint() {
             document.getElementById('result').innerHTML = '';
+        }
+        
+        function trimTrailing() {
+            var input = document.getElementById("input");
+            
+            var text = input.value;
+            
+            var trimmed = trimTrailingSpaces(text);
+            
+            input.value = trimmed;
+        }
+        
+        function trimTrailingSpaces(text) {
+            // var reTail = /(\s+)$/gm;
+            var reTail = /(( |\t)+)\n/gm;
+            
+            var result = text.replace(reTail, '\n');
+            
+            return result;
         }
 
         function comment() {
@@ -160,10 +183,11 @@
             
             function removeForeAndTailSpaces(text) {
                 var re = /\n(?: |\t)+/gm;
-                var reTail = /(\s+)$/gm;
+                // var reTail = /(\s+)$/gm;
                 
                 var result = ('\n' + text).replace(re, '\n').substr(1);
-                result = result.replace(reTail, '');
+                //result = result.replace(reTail, '');
+                result = trimTrailingSpaces(result);
                 
                 return result;
             }

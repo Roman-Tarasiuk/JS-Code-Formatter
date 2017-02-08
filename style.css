@@ -52,7 +52,12 @@ a.lnk:hover {
     font-size: smaller;
 }
 
-#raw {
+
+#input {
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+.btn-group {
+    margin: 4px;
 }
