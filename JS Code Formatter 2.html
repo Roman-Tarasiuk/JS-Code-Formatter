@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>> JS Comments</title>
+    
+    <style>
+        #input {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <textarea id="input"></textarea>
+    <br>
+    <button onclick=selectAll()>Select all</button>
+    <button onclick=comment()>Comment</button>
+    <button onclick=uncomment()>Uncomment</button>
+    <button onclick=beautify()>Beautify</button>
+    <button onclick=addIndent()>&gt; indent</button>
+    <button onclick=removeIndent()>&lt; indent</button>
+    
+    <script>
+        function comment() {
+            var input = document.getElementById("input");
+            
+            var text = input.value;
+            
+            var re = /\n/g;
+            var commentStr = '// ';
+            
+            text = commentStr + text.replace(re, '\n' + commentStr);
+            
+            input.value = text;
+        }
+        
+        function uncomment() {
+            var input = document.getElementById("input");
+            
+            var text = input.value;
+            var re = /\n\/\/ /g;
+            var commentStart = '// ';
+            
+            text = text.replace(re, '\n');
+            if (text.startsWith(commentStart)) {
+                text = text.substr(commentStart.length);
+            }
+            
+            input.value = text;
+        }
+        
+        function selectAll() {
+            var input = document.getElementById("input");
+            
+            input.select();
+        }
+        
+        function beautify() {
+            var indentStr = '    ';
+            
+            var input = document.getElementById("input");
+            
+            var text = input.value;
+            
+            text = formatJS(text, indentStr);
+            
+            input.value = text;
+            
+
+            function formatJS(text, indentStr) {
+                var result = '';
+                
+                var indent = '';
+                
+                var tokens = getTokens(text);
+                
+                for (var i = 0; i < tokens.length; i++) {
+                    tokens[i] = removeForeAndTailSpaces(tokens[i]);
+                    
+                    if (isComment(tokens[i])) {
+                        result += addForeIndent(tokens[i], indent) + '\n';
+                    }
+                    else {
+                        var resTmp = processCode(tokens[i], indent, indentStr);
+                        
+                        result += resTmp.code;
+                        indent = resTmp.indent;
+                    }
+                }
+                
+                return result;
+            }
+            
+            function getTokens(text) {
+                // var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
+                var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
+                
+                var result = [];
+                var tok;
+                while (((tok = tokensRe.exec(text)) != null)
+                        || (tokensRe.index < text.length)) {
+                    result.push(tok[0]);
+                }
+                
+                return result;
+            }
+            
+            function isComment(text) {
+                return text.startsWith('//') || text.startsWith('/*');
+            }
+            
+            function removeForeAndTailSpaces(text) {
+                var re = /\n(?: |\t)+/gm;
+                var reTail = /(\s+)$/gm;
+                
+                var result = ('\n' + text).replace(re, '\n').substr(1);
+                result = result.replace(reTail, '');
+                
+                return result;
+            }
+            
+            function opensBrace(text) {
+                return (text.length > 0)
+                    && (text.indexOf('{') == (text.length - 1));
+            }
+            
+            function closesBrace(text) {
+                return (text == '}') || (text == '};');
+            }
+            
+            function processCode(code, indentCurrent, indentStr) {
+                var strings = code.split('\n');
+                var resultCode = '';
+                
+                for (var i = 0; i < strings.length; i++) {
+                    if (opensBrace(strings[i])) {
+                        resultCode += indentCurrent + strings[i] + '\n';
+                        indentCurrent += indentStr;
+                    }
+                    else if (closesBrace(strings[i])) {
+                        indentCurrent = indentCurrent.substr(indentStr.length);
+                        resultCode += indentCurrent + strings[i] + '\n';
+                    }
+                    else {
+                        resultCode += indentCurrent + strings[i] + '\n';
+                    }
+                }
+                
+                return {
+                    // code: resultCode.substr(0, resultCode.length - 1),
+                    code: resultCode,
+                    indent: indentCurrent
+                };
+            }
+        }
+        
+        function addIndent() {
+            var input = document.getElementById('input');
+
+            var text = input.value;
+            
+            text = addForeIndent(text, ' ');
+            
+            input.value = text;
+        }
+        
+        function removeIndent() {
+            var input = document.getElementById('input');
+
+            var text = input.value;
+            
+            text = removeForeIndent(text);
+            
+            input.value = text;
+        }
+          
+        function addForeIndent(text, indent) {
+            var re = /\n/gm;
+            
+            var result = (indent + text).replace(re, '\n' + indent);
+            
+            return result;
+        }
+        
+        function removeForeIndent(text) {
+            var re = /\n(?: |\t)/gm;
+            
+            var result = ('\n' + text).replace(re, '\n').substr(1);
+            
+            return result;
+        }
+    </script>
+</body>
+</html>
