@@ -150,16 +150,13 @@
 
                 for (var i = 0; i < tokens.length; i++) {
                     if (isComment(tokens[i])) {
-                        //if (isSingleLineComment(tokens[i])) {
-                        if (isSingleLineComment(tokens[i]) && (tokens[i].lastIndexOf('\n') == (tokens[i].length - 1))) {
-                            tokens[i] = tokens[i].substr(0, tokens[i].length - 1);
-                            result += addForeIndent(tokens[i], indent) + '\n';
-                        }
-                        else {
-                            result += addForeIndent(tokens[i], indent);
-                        }
+                        result += addForeIndent(tokens[i], indent);
                     }
-                    else {
+                    else { // Code (not comment).
+                        if (tokens[i].lastIndexOf('\n') == (tokens[i].length - 1)) {
+                            tokens[i] = tokens[i].substr(0, tokens[i].length - 1);
+                        }
+                        
                         var resTmp = processCode(tokens[i], indent, indentStr);
 
                         result += resTmp.code;
@@ -168,15 +165,14 @@
                 }
                 
                 result = restoreComments(result);
-
+                
                 return (result.lastIndexOf('\n') == (result.length - 1))
                     ? result.substr(0, result.length - 1)
                     : result;
             }
 
             function getTokens(text) {
-                //var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
-                var tokensRe = /(\/\/.*\n?)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
+                var tokensRe = /(\/\/.*\n?)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)(.|\n)/gm;
 
                 var result = [];
                 var tok;
