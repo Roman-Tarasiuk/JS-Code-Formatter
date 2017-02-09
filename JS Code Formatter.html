@@ -48,80 +48,53 @@
         // #region Event handlers
         //
 
-        function processPrettyPrint() {
-            // http://stackoverflow.com/questions/15983894/dynamic-google-code-prettify-doesnt-work
-            document.getElementById('result').className = 'prettyprint';
-
-            var input = document.getElementById('input');
-
-            document.getElementById('result').innerText = input.value;
-            prettyPrint();
-        }
-
-        function clearPrettyPrint() {
-            document.getElementById('result').innerHTML = '';
-        }
-
         function oneSpaceToSeveral() {
-            var input = document.getElementById('input');
-            var text = input.value;
+            processInput(function(text) {
+                var re = /(\n|\r\n)( +)/gm;
 
-            var re = /(\n|\r\n)( +)/gm;
+                var replaceTo = '$1$2';
+                var replaceCount = parseInt(document.getElementById('indent').value);
 
-            var replaceTo = '$1$2';
-            var replaceCount = parseInt(document.getElementById('indent').value);
-            for (var i = 1; i < replaceCount; i++) {
-                replaceTo += '$2';
-            }
+                for (var i = 1; i < replaceCount; i++) {
+                    replaceTo += '$2';
+                }
 
-            text = text.replace(re, replaceTo);
+                text = text.replace(re, replaceTo);
 
-            input.value = text;
+                return text;
+            });
         }
 
-        function trimTrailing() {
-            var input = document.getElementById("input");
-            var text = input.value;
+        function addIndent() {
+            processInput(function(text) {
+                text = addForeIndent(text, ' ');
 
-            var trimmed = trimTrailingSpaces(text);
+                return text;
+            });
+        }
 
-            input.value = trimmed;
+        function removeIndent() {
+            processInput(function(text) {
+                text = removeForeIndent(text, ' ');
+
+                return text;
+            });
         }
 
         function trimFore() {
-            var input = document.getElementById("input");
-            var text = input.value;
+            processInput(function(text) {
+                var trimmed = trimForeSpaces(text);
 
-            var trimmed = trimForeSpaces(text);
-
-            input.value = trimmed;
+                return trimmed;
+            });
         }
 
-        function comment() {
-            var input = document.getElementById("input");
-            var text = input.value;
+        function trimTrailing() {
+            processInput(function(text) {
+                var trimmed = trimTrailingSpaces(text);
 
-            var re = /\n/g;
-            var commentStr = '// ';
-
-            text = commentStr + text.replace(re, '\n' + commentStr);
-
-            input.value = text;
-        }
-
-        function uncomment() {
-            var input = document.getElementById("input");
-            var text = input.value;
-            
-            var re = /\n\/\/ /g;
-            var commentStart = '// ';
-
-            text = text.replace(re, '\n');
-            if (text.startsWith(commentStart)) {
-                text = text.substr(commentStart.length);
-            }
-
-            input.value = text;
+                return trimmed;
+            });
         }
 
         function selectAll() {
@@ -130,48 +103,61 @@
             input.select();
         }
 
-        function addIndent() {
-            var input = document.getElementById('input');
-            var text = input.value;
+        function comment() {
+            processInput(function(text) {
+                var re = /\n/g;
+                var commentStr = '// ';
 
-            text = addForeIndent(text, ' ');
+                text = commentStr + text.replace(re, '\n' + commentStr);
 
-            input.value = text;
+                return text;
+            });
         }
 
-        function removeIndent() {
-            var input = document.getElementById('input');
-            var text = input.value;
+        function uncomment() {
+            processInput(function(text) {
+                var re = /\n\/\/ /g;
+                var commentStart = '// ';
 
-            text = removeForeIndent(text);
+                text = text.replace(re, '\n');
+                
+                if (text.startsWith(commentStart)) {
+                    text = text.substr(commentStart.length);
+                }
 
-            input.value = text;
+                return text;
+            });
         }
 
         function beautify() {
-            var indentStr = '    ';
+            processInput(function(text) {
+                var indentStr = '    ';
 
-            var input = document.getElementById("input");
-            var text = input.value;
+                text = formatJS(text, indentStr);
 
-            text = formatJS(text, indentStr);
-
-            input.value = text;
-
+                return text;
+            });
 
             function formatJS(text, indentStr) {
                 var result = '';
                 var indent = '';
 
                 text = trimTrailingSpaces(text);
+                text = trimForeSpaces(text);
+                text = prepareComments(text);
 
                 var tokens = getTokens(text);
 
                 for (var i = 0; i < tokens.length; i++) {
-                    tokens[i] = trimForeSpaces(tokens[i]);
-
                     if (isComment(tokens[i])) {
-                        result += addForeIndent(tokens[i], indent);
+                        //if (isSingleLineComment(tokens[i])) {
+                        if (isSingleLineComment(tokens[i]) && (tokens[i].lastIndexOf('\n') == (tokens[i].length - 1))) {
+                            tokens[i] = tokens[i].substr(0, tokens[i].length - 1);
+                            result += addForeIndent(tokens[i], indent) + '\n';
+                        }
+                        else {
+                            result += addForeIndent(tokens[i], indent);
+                        }
                     }
                     else {
                         var resTmp = processCode(tokens[i], indent, indentStr);
@@ -180,12 +166,17 @@
                         indent = resTmp.indent;
                     }
                 }
+                
+                result = restoreComments(result);
 
-                return result;
+                return (result.lastIndexOf('\n') == (result.length - 1))
+                    ? result.substr(0, result.length - 1)
+                    : result;
             }
 
             function getTokens(text) {
-                var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
+                //var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
+                var tokensRe = /(\/\/.*\n?)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
 
                 var result = [];
                 var tok;
@@ -199,6 +190,10 @@
 
             function isComment(text) {
                 return text.startsWith('//') || text.startsWith('/*');
+            }
+            
+            function isSingleLineComment(text) {
+                return text.startsWith('//');
             }
 
             function opensBrace(text) {
@@ -235,12 +230,49 @@
             }
         }
 
+        function processPrettyPrint() {
+            // http://stackoverflow.com/questions/15983894/dynamic-google-code-prettify-doesnt-work
+            var resultCtrl = document.getElementById('result');
+            var input = document.getElementById('input');
+
+            resultCtrl.className = 'prettyprint';
+            resultCtrl.innerText = input.value;
+            
+            prettyPrint();
+        }
+
+        function clearPrettyPrint() {
+            document.getElementById('result').innerHTML = '';
+        }
+
         //
         // #region Helper functions
         //
         
-        function process(f) {
+        function prepareComments(text) {
+            var re = /(\S)((?: |\t)*)(\/\/)/g;
+            var slcTag = '//___SLC___';
             
+            var result = text.replace(re, '$1' + slcTag + '$2$3');
+            
+            return result;
+        }
+        
+        function restoreComments(text) {
+            var re = /(\n)((?: |\t)*)(\/\/___SLC___)(.*)/gm;
+            
+            var result = text.replace(re, '$4');
+            
+            return result;
+        }
+
+        function processInput(processor) {
+            var input = document.getElementById('input');
+            var text = input.value;
+
+            text = processor(text);
+
+            input.value = text;
         }
 
         function trimTrailingSpaces(text) {
