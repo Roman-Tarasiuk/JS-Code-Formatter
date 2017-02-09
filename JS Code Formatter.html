@@ -48,23 +48,6 @@
         // #region Event handlers
         //
 
-        function oneSpaceToSeveral() {
-            var re = /(\n|\r\n)( +)/gm;
-
-            var input = document.getElementById('input');
-            var text = input.value;
-
-            var replaceTo = '$1$2';
-            var replaceCount = parseInt(document.getElementById('indent').value);
-            for (var i = 1; i < replaceCount; i++) {
-                replaceTo += '$2';
-            }
-
-            text = text.replace(re, replaceTo);
-
-            input.value = text;
-        }
-
         function processPrettyPrint() {
             // http://stackoverflow.com/questions/15983894/dynamic-google-code-prettify-doesnt-work
             document.getElementById('result').className = 'prettyprint';
@@ -79,9 +62,25 @@
             document.getElementById('result').innerHTML = '';
         }
 
+        function oneSpaceToSeveral() {
+            var input = document.getElementById('input');
+            var text = input.value;
+
+            var re = /(\n|\r\n)( +)/gm;
+
+            var replaceTo = '$1$2';
+            var replaceCount = parseInt(document.getElementById('indent').value);
+            for (var i = 1; i < replaceCount; i++) {
+                replaceTo += '$2';
+            }
+
+            text = text.replace(re, replaceTo);
+
+            input.value = text;
+        }
+
         function trimTrailing() {
             var input = document.getElementById("input");
-
             var text = input.value;
 
             var trimmed = trimTrailingSpaces(text);
@@ -91,7 +90,6 @@
 
         function trimFore() {
             var input = document.getElementById("input");
-
             var text = input.value;
 
             var trimmed = trimForeSpaces(text);
@@ -101,7 +99,6 @@
 
         function comment() {
             var input = document.getElementById("input");
-
             var text = input.value;
 
             var re = /\n/g;
@@ -114,8 +111,8 @@
 
         function uncomment() {
             var input = document.getElementById("input");
-
             var text = input.value;
+            
             var re = /\n\/\/ /g;
             var commentStart = '// ';
 
@@ -135,7 +132,6 @@
 
         function addIndent() {
             var input = document.getElementById('input');
-
             var text = input.value;
 
             text = addForeIndent(text, ' ');
@@ -145,7 +141,6 @@
 
         function removeIndent() {
             var input = document.getElementById('input');
-
             var text = input.value;
 
             text = removeForeIndent(text);
@@ -157,7 +152,6 @@
             var indentStr = '    ';
 
             var input = document.getElementById("input");
-
             var text = input.value;
 
             text = formatJS(text, indentStr);
@@ -177,7 +171,6 @@
                     tokens[i] = trimForeSpaces(tokens[i]);
 
                     if (isComment(tokens[i])) {
-                        //result += addForeIndent(tokens[i], indent) + '\n';
                         result += addForeIndent(tokens[i], indent);
                     }
                     else {
@@ -192,7 +185,6 @@
             }
 
             function getTokens(text) {
-                //var tokensRe = /(\/\/.*)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
                 var tokensRe = /(\/\/.*\n)|(\/\*(?:.|\n)*\*\/)|(((?:.|\n)(?!\/\/|\/\*))+)/gm;
 
                 var result = [];
@@ -246,6 +238,10 @@
         //
         // #region Helper functions
         //
+        
+        function process(f) {
+            
+        }
 
         function trimTrailingSpaces(text) {
             var reTail = /( |\t)+(?=$|\n)/g;
