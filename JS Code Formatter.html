@@ -153,7 +153,7 @@
                         result += addForeIndent(tokens[i], indent);
                     }
                     else { // Code (not comment).
-                        if (tokens[i].lastIndexOf('\n') == (tokens[i].length - 1)) {
+                        if (tokens[i].endsWith('\n')) {
                             tokens[i] = tokens[i].substr(0, tokens[i].length - 1);
                         }
                         
@@ -166,7 +166,7 @@
                 
                 result = restoreComments(result);
                 
-                return (result.lastIndexOf('\n') == (result.length - 1))
+                return result.endsWith('\n')
                     ? result.substr(0, result.length - 1)
                     : result;
             }
