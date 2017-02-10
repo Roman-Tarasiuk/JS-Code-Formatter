@@ -150,7 +150,13 @@
 
                 for (var i = 0; i < tokens.length; i++) {
                     if (isComment(tokens[i])) {
-                        result += addForeIndent(tokens[i], indent);
+                        var tmp = addForeIndent(tokens[i], indent);
+
+                        if (isSingleLineComment(tokens[i])) {
+                            tmp = tmp.substr(0, tmp.length - indent.length);
+                        }
+                        
+                        result += tmp;
                     }
                     else { // Code (not comment).
                         if (tokens[i].endsWith('\n')) {
