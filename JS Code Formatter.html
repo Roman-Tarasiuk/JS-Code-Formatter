@@ -171,6 +171,7 @@
                 }
                 
                 result = restoreComments(result);
+                result = trimTrailingSpaces(result);
                 
                 return result.endsWith('\n')
                     ? result.substr(0, result.length - 1)
