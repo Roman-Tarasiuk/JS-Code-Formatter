@@ -205,7 +205,7 @@
             }
 
             function closesBrace(text) {
-                return (text == '}') || (text == '};');
+                return (text == '}') || (text == '};') || text.startsWith('}');
             }
 
             function processCode(code, indentCurrent, indentStr) {
