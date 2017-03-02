@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Code Dependencies</title>
+    <!-- <link rel="shortcut icon" href="img/icon.png"> -->
+    
+    <link rel="stylesheet" type="text/css" href="style-cd.css">
+</head>
+
+<body>
+    <div id="settings">
+        <label>
+            Id: <input id="id">
+        </label>
+        <button id="newDivBtn">New</button>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+        // Moveable div: http://jsfiddle.net/wUAGP/440/
+    
+        $(document).ready(function(){
+            //
+            // Declarations and definitions.
+            //
+            
+            var canMove = true;
+            var mouseIsDown = false;
+            var divIds = [];
+            var currentDiv;
+            
+            function newDiv() {
+                var id = $('#id').val();
+                
+                if (id == '') {
+                    return;
+                }
+                
+                if (divIds.indexOf(id) >= 0) {
+                    return;
+                }
+                
+                var newDivStr = '<div id="' + id + '" class="moveAble"></div>';
+                var $newDiv = $(newDivStr);
+                $newDiv.hover(function() {
+                    currentDiv = this;
+                });
+                
+                $('body').append($newDiv);
+                divIds.push(id);
+            }
+            
+            function moveDiv(div, y, x) {
+                $(div).css({'top': y,'left': x});
+            }
+        
+            //
+            // Initialization.
+            //
+            
+            $('#newDivBtn').click(newDiv);
+            
+            $(document).mousemove(function(e){
+                if (mouseIsDown && canMove && currentDiv) {
+                    moveDiv(currentDiv, e.pageY, e.pageX);
+                }
+            });
+            
+            $(document).mousedown(function(e){
+                mouseIsDown = true;
+                if (canMove && currentDiv) {
+                    moveDiv(currentDiv, e.pageY, e.pageX);
+                }
+            });
+            
+            $(document).mouseup(function(e){
+                mouseIsDown = false;
+            });
+            
+            $('#settings').hover(
+                function() {
+                    canMove = false;
+                },
+                function() {
+                    canMove = true;
+                }
+            );
+        });
+    </script>
+</body>
+</html>

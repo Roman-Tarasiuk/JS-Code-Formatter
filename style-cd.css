@@ -1,0 +1,23 @@
+body {
+    /*background-color: #fff;*/
+}
+
+#settings {
+    width: 250px;
+    height: 200px;
+    background-color: #cfc;
+    padding: 2px;
+}
+
+.moveAble {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 254px;
+    top: 100px;
+    background-color: #ccf;
+}
+
+.moveAble:hover {
+    outline: 1px solid lightgrey;
+}
