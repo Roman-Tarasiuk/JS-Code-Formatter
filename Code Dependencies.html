@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div id="settings">
+    <div id="creator">
         <label>
             Id: <input id="id">
         </label>
@@ -21,7 +21,7 @@
     <script>
         // Moveable div: http://jsfiddle.net/wUAGP/440/
     
-        $(document).ready(function(){
+        $(document).ready(function() {
             //
             // Declarations and definitions.
             //
@@ -30,6 +30,8 @@
             var mouseIsDown = false;
             var divIds = [];
             var currentDiv;
+            var dY;
+            var dX;
             
             function newDiv() {
                 var id = $('#id').val();
@@ -55,6 +57,17 @@
             function moveDiv(div, y, x) {
                 $(div).css({'top': y,'left': x});
             }
+            
+            function setNonMovableRegion(el) {
+                    $(el).hover(
+                    function() {
+                        canMove = false;
+                    },
+                    function() {
+                        canMove = true;
+                    }
+                );
+            }
         
             //
             // Initialization.
@@ -62,31 +75,27 @@
             
             $('#newDivBtn').click(newDiv);
             
-            $(document).mousemove(function(e){
+            $(document).mousemove(function(e) {
                 if (mouseIsDown && canMove && currentDiv) {
-                    moveDiv(currentDiv, e.pageY, e.pageX);
+                    moveDiv(currentDiv, e.pageY + dY, e.pageX + dX);
                 }
             });
             
-            $(document).mousedown(function(e){
+            $(document).mousedown(function(e) {
                 mouseIsDown = true;
                 if (canMove && currentDiv) {
-                    moveDiv(currentDiv, e.pageY, e.pageX);
+                    dY = parseInt($(currentDiv).css('top')) - e.pageY;
+                    dX = parseInt($(currentDiv).css('left')) - e.pageX;
+
+                    moveDiv(currentDiv, e.pageY + dY, e.pageX + dX);
                 }
             });
             
-            $(document).mouseup(function(e){
+            $(document).mouseup(function(e) {
                 mouseIsDown = false;
             });
             
-            $('#settings').hover(
-                function() {
-                    canMove = false;
-                },
-                function() {
-                    canMove = true;
-                }
-            );
+            setNonMovableRegion('#creator');
         });
     </script>
 </body>
