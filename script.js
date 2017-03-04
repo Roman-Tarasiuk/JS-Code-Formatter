@@ -5,28 +5,32 @@ $(document).ready(function() {
     // Declarations and definitions.
     //
     
-    var canMove = true;
+    var canResize = false;
     var mouseIsDown = false;
     var divIds = [];
     var currentDiv;
     var dY;
     var dX;
+    var cursorDelta = 5
+    var trackCursor = false;
     
     function newDiv() {
         var id = $('#id').val();
         
-        if (id == '') {
-            return;
-        }
-        
-        if (divIds.indexOf(id) >= 0) {
+        if ((id == '') || (divIds.indexOf(id) >= 0)) {
             return;
         }
         
         var newDivStr = '<div id="' + id + '" class="moveAble"></div>';
         var $newDiv = $(newDivStr);
-        $newDiv.hover(function() {
+        
+        $newDiv.hover(function(e) {
+            trackCursor = true;
             currentDiv = this;
+        }, function() {
+            trackCursor = false;
+            currentDiv = null;
+            $('body').css('cursor', 'auto');
         });
         
         $('body').append($newDiv);
@@ -37,17 +41,33 @@ $(document).ready(function() {
         $(div).css({'top': y,'left': x});
     }
     
-    function setNonMovableRegion(el) {
-            $(el).hover(
-            function() {
-                canMove = false;
-            },
-            function() {
-                canMove = true;
-            }
-        );
+    function selectCursor(div, e) {
+        if (!div) {
+            return;
+        }
+        
+        var top = parseInt($(div).css('top'));
+        var height = parseInt($(div).css('height'));
+        var left = parseInt($(div).css('left'));
+        var width = parseInt($(div).css('width'));
+        
+        var ns = (e.pageY >= (top + height - cursorDelta)) && (e.pageY <= (top + height));
+        var ew = (e.pageX >= (left + width - cursorDelta)) && (e.pageX <= (left + width));
+        
+        if (ns && ew) {
+            $(div).css('cursor', 'nw-resize');
+        }
+        else if (ns) {
+            $(div).css('cursor', 'ns-resize');
+        }
+        else if (ew) {
+            $(div).css('cursor', 'ew-resize');
+        }
+        else {
+            $(div).css('cursor', 'auto');
+        }
     }
-
+    
     //
     // Initialization.
     //
@@ -55,24 +75,25 @@ $(document).ready(function() {
     $('#newDivBtn').click(newDiv);
     
     $(document).mousemove(function(e) {
-        if (mouseIsDown && canMove && currentDiv) {
+        if (trackCursor) {
+            selectCursor(currentDiv, e);
+        }
+        
+        if (mouseIsDown && currentDiv) {
             moveDiv(currentDiv, e.pageY + dY, e.pageX + dX);
         }
     });
     
     $(document).mousedown(function(e) {
         mouseIsDown = true;
-        if (canMove && currentDiv) {
+        
+        if (currentDiv) {
             dY = parseInt($(currentDiv).css('top')) - e.pageY;
             dX = parseInt($(currentDiv).css('left')) - e.pageX;
-
-            moveDiv(currentDiv, e.pageY + dY, e.pageX + dX);
         }
     });
     
     $(document).mouseup(function(e) {
         mouseIsDown = false;
     });
-    
-    setNonMovableRegion('#creator');
 });
