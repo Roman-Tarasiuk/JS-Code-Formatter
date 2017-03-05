@@ -41,6 +41,10 @@ $(document).ready(function() {
         $(div).css({'top': y,'left': x});
     }
     
+    function resizeDiv(div, h, w) {
+        $(div).css({'height': h,'width': w});
+    }
+    
     function selectCursor(div, e) {
         if (!div) {
             return;
