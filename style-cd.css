@@ -21,3 +21,7 @@ body {
 .moveAble:hover {
     outline: 1px solid lightgrey;
 }
+
+.ui-resizable-helper {
+    border: 1px dotted #999;
+}

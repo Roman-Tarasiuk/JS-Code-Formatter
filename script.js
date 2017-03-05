@@ -5,14 +5,13 @@ $(document).ready(function() {
     // Declarations and definitions.
     //
     
-    var canResize = false;
+    var cursorDelta = 5
+
     var mouseIsDown = false;
     var divIds = [];
     var currentDiv;
     var dY;
     var dX;
-    var cursorDelta = 5
-    var trackCursor = false;
     
     function newDiv() {
         var id = $('#id').val();
@@ -25,16 +24,19 @@ $(document).ready(function() {
         var $newDiv = $(newDivStr);
         
         $newDiv.hover(function(e) {
-            trackCursor = true;
             currentDiv = this;
         }, function() {
-            trackCursor = false;
             currentDiv = null;
-            $('body').css('cursor', 'auto');
         });
         
         $('body').append($newDiv);
         divIds.push(id);
+        
+        // https://jsfiddle.net/winstonchang/dfqtt/
+        $($newDiv).resizable({
+            helper: "ui-resizable-helper",
+            grid: [10, 10]
+        });
     }
     
     function moveDiv(div, y, x) {
@@ -45,33 +47,6 @@ $(document).ready(function() {
         $(div).css({'height': h,'width': w});
     }
     
-    function selectCursor(div, e) {
-        if (!div) {
-            return;
-        }
-        
-        var top = parseInt($(div).css('top'));
-        var height = parseInt($(div).css('height'));
-        var left = parseInt($(div).css('left'));
-        var width = parseInt($(div).css('width'));
-        
-        var ns = (e.pageY >= (top + height - cursorDelta)) && (e.pageY <= (top + height));
-        var ew = (e.pageX >= (left + width - cursorDelta)) && (e.pageX <= (left + width));
-        
-        if (ns && ew) {
-            $(div).css('cursor', 'nw-resize');
-        }
-        else if (ns) {
-            $(div).css('cursor', 'ns-resize');
-        }
-        else if (ew) {
-            $(div).css('cursor', 'ew-resize');
-        }
-        else {
-            $(div).css('cursor', 'auto');
-        }
-    }
-    
     //
     // Initialization.
     //
@@ -79,10 +54,6 @@ $(document).ready(function() {
     $('#newDivBtn').click(newDiv);
     
     $(document).mousemove(function(e) {
-        if (trackCursor) {
-            selectCursor(currentDiv, e);
-        }
-        
         if (mouseIsDown && currentDiv) {
             moveDiv(currentDiv, e.pageY - dY, e.pageX - dX);
         }
