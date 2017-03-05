@@ -80,7 +80,7 @@ $(document).ready(function() {
         }
         
         if (mouseIsDown && currentDiv) {
-            moveDiv(currentDiv, e.pageY + dY, e.pageX + dX);
+            moveDiv(currentDiv, e.pageY - dY, e.pageX - dX);
         }
     });
     
@@ -88,8 +88,8 @@ $(document).ready(function() {
         mouseIsDown = true;
         
         if (currentDiv) {
-            dY = parseInt($(currentDiv).css('top')) - e.pageY;
-            dX = parseInt($(currentDiv).css('left')) - e.pageX;
+            dY = e.pageY - parseInt($(currentDiv).css('top'));
+            dX = e.pageX - parseInt($(currentDiv).css('left'));
         }
     });
     
