@@ -27,16 +27,26 @@ $(document).ready(function() {
             currentDiv = this;
         }, function() {
             currentDiv = null;
-        });
+        }).bind('moveend', function() {
+          console.log('moveend: ' + id);
+        });;
+        
+        $newDiv.css({'top': 40,'left': 40});
         
         $('body').append($newDiv);
         divIds.push(id);
         
         // https://jsfiddle.net/winstonchang/dfqtt/
-        $($newDiv).resizable({
+        $newDiv.resizable({
             helper: "ui-resizable-helper",
             grid: [10, 10]
         });
+        
+        // var node = document.querySelector('#' + id);
+        // 
+        // node.addEventListener('moveend', function() {
+        //   console.log('moveend: ' + id);
+        // });
     }
     
     function moveDiv(div, y, x) {
