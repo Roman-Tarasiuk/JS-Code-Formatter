@@ -120,7 +120,7 @@
                 var commentStart = '// ';
 
                 text = text.replace(re, '\n');
-                
+
                 if (text.startsWith(commentStart)) {
                     text = text.substr(commentStart.length);
                 }
@@ -142,6 +142,7 @@
                 var result = '';
                 var indent = '';
 
+                text = prepareParentheses(text);
                 text = trimTrailingSpaces(text);
                 text = trimForeSpaces(text);
                 text = prepareComments(text);
@@ -155,24 +156,24 @@
                         if (isSingleLineComment(tokens[i])) {
                             tmp = tmp.substr(0, tmp.length - indent.length);
                         }
-                        
+
                         result += tmp;
                     }
                     else { // Code (not comment).
                         if (tokens[i].endsWith('\n')) {
                             tokens[i] = tokens[i].substr(0, tokens[i].length - 1);
                         }
-                        
+
                         var resTmp = processCode(tokens[i], indent, indentStr);
 
                         result += resTmp.code;
                         indent = resTmp.indent;
                     }
                 }
-                
+
                 result = restoreComments(result);
                 result = trimTrailingSpaces(result);
-                
+
                 return result.endsWith('\n')
                     ? result.substr(0, result.length - 1)
                     : result;
@@ -194,7 +195,7 @@
             function isComment(text) {
                 return text.startsWith('//') || text.startsWith('/*');
             }
-            
+
             function isSingleLineComment(text) {
                 return text.startsWith('//');
             }
@@ -240,7 +241,7 @@
 
             resultCtrl.className = 'prettyprint';
             resultCtrl.innerText = input.value;
-            
+
             prettyPrint();
         }
 
@@ -251,21 +252,21 @@
         //
         // #region Helper functions
         //
-        
+
         function prepareComments(text) {
             var re = /(\S)((?: |\t)*)(\/\/)/g;
             var slcTag = '//___SLC___';
-            
+
             var result = text.replace(re, '$1' + slcTag + '$2$3');
-            
+
             return result;
         }
-        
+
         function restoreComments(text) {
             var re = /(\n)((?: |\t)*)(\/\/___SLC___)(.*)/gm;
-            
+
             var result = text.replace(re, '$4');
-            
+
             return result;
         }
 
@@ -284,6 +285,19 @@
             var result = text.replace(reTail, '');
 
             return result;
+        }
+        
+        function prepareParentheses(text) {
+            var re1 = /(\{)/g;
+            text = text.replace(re1, ' $1\n');
+            
+            var re2 = /(\})/g;
+            text = text.replace(re2, '\n$1\n');
+            
+            var re3 = /\n\n/g;
+            text = text.replace(re3, '\n');
+            
+            return text;
         }
 
         function trimForeSpaces(text) {
