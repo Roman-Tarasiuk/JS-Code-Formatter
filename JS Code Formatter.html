@@ -286,17 +286,31 @@
 
             return result;
         }
-        
+
         function prepareParentheses(text) {
-            var re1 = /(\{)/g;
-            text = text.replace(re1, ' $1\n');
-            
-            var re2 = /(\})/g;
-            text = text.replace(re2, '\n$1\n');
-            
-            var re3 = /\n\n/g;
-            text = text.replace(re3, '\n');
-            
+            text = text.replace(/(\{)/g, ' $1\n');
+
+            text = text.replace(/(\})/g, '\n$1\n');
+
+            do {
+                var len = text.length;
+                text = text.replace(/  /g, ' ');
+            } while(len > text.length);
+
+            do {
+                var len = text.length;
+                text = text.replace(/\n\n/g, '\n');
+            } while(len > text.length);
+
+            do {
+                var len = text.length;
+                text = text.replace(/\n \n/g, '\n');
+            } while(len > text.length);
+
+            text = text.replace(/\( \{/g, '({');
+
+            text = text.replace(/\}\n\)/g, '})');
+
             return text;
         }
 
